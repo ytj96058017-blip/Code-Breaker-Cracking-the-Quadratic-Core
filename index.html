@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>코드 브레이커: 2차방정식 코어 크래킹 - 중3 수학 4인 실시간 협동 배틀</title>
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Jua&family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@500;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
     
@@ -36,11 +36,6 @@
             box-shadow: 0 0 20px rgba(6, 182, 212, 0.35), inset 0 0 15px rgba(6, 182, 212, 0.15);
         }
 
-        .neon-border-rose {
-            border: 2px solid #f43f5e;
-            box-shadow: 0 0 20px rgba(244, 63, 94, 0.35), inset 0 0 15px rgba(244, 63, 94, 0.15);
-        }
-
         .hud-corner {
             position: relative;
         }
@@ -54,12 +49,6 @@
         }
         .hud-corner::before { top: -2px; left: -2px; border-top: 3px solid; border-left: 3px solid; }
         .hud-corner::after { bottom: -2px; right: -2px; border-bottom: 3px solid; border-right: 3px solid; }
-
-        .scanlines {
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
-        }
 
         @keyframes corePulseGlow {
             0%, 100% { filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.6)); }
@@ -79,6 +68,11 @@
 
         .glitch-text {
             text-shadow: 0 0 10px rgba(34, 211, 238, 0.8), 2px 2px #ec4899;
+        }
+
+        .glitch-overlay {
+            background: repeating-radial-gradient(circle, rgba(15, 23, 42, 0.94), rgba(30, 41, 59, 0.98) 12px);
+            backdrop-filter: blur(14px);
         }
     </style>
 </head>
@@ -186,7 +180,7 @@
             <!-- Quick Reset Bar for Ghost Cleanup -->
             <div class="flex items-center justify-between px-1">
                 <div class="flex items-center gap-2 text-xs font-mono-code text-cyan-400">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                     <span>LIVE_OPERATION // 4-STAGE INTERLOCK PIPELINE</span>
                 </div>
                 <button onclick="resetCurrentRoomData()" class="px-3 py-1.5 bg-rose-950/80 hover:bg-rose-900 border border-rose-500/60 rounded-xl text-xs text-rose-300 font-bold transition active:scale-95 shadow flex items-center gap-1.5 font-mono-code">
@@ -227,12 +221,12 @@
                 </div>
             </div>
 
-            <!-- Cyber Matrix 2D Arena Canvas (Spectacular Redesign) -->
+            <!-- Cyber Matrix 2D Arena Canvas -->
             <div class="relative w-full h-72 md:h-84 bg-slate-950 rounded-3xl border-2 border-cyan-500/60 overflow-hidden shadow-2xl hud-corner">
                 <canvas id="cyber-canvas" class="w-full h-full block cursor-crosshair"></canvas>
                 
                 <div class="absolute top-2 left-3 px-3 py-1 bg-slate-950/90 border border-cyan-400/60 rounded-full text-xs font-mono-code text-cyan-300 z-10 flex items-center gap-2 shadow">
-                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                     <span>QUANTUM_VAULT //</span>
                     <span id="matrix-status-label" class="font-bold text-yellow-300">4중 암호 링 해독 대기</span>
                 </div>
@@ -285,7 +279,7 @@
                     </span>
                 </div>
 
-                <!-- Quadratic Equation Expression Display with Cyberpunk Holographic Border -->
+                <!-- Quadratic Equation Expression Display -->
                 <div class="w-full max-w-3xl bg-slate-900/90 border-2 border-cyan-400/80 rounded-2xl p-3.5 md:p-5 shadow-inner mb-3 hud-corner">
                     <div class="text-xs font-semibold text-cyan-300 mb-1.5 tracking-wider uppercase flex items-center justify-between px-2 font-mono-code">
                         <span>[CIPHER MATRIX // ENCRYPTED EQUATION]</span>
@@ -304,7 +298,6 @@
                     <div class="flex items-center justify-center gap-2 text-sm md:text-base font-bold">
                         <span class="text-cyan-300">x =</span>
                         <div class="flex flex-col items-center">
-                            <!-- Numerator -->
                             <div class="flex items-center gap-1 border-b border-cyan-400/60 pb-1">
                                 <span id="formula-slot-b" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-400 font-bold transition-all">
                                     -b (공식 부품)
@@ -315,7 +308,6 @@
                                     D (판별식)
                                 </span>
                             </div>
-                            <!-- Denominator -->
                             <div class="pt-1">
                                 <span id="formula-slot-2a" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-400 font-bold transition-all">
                                     2a (분모)
@@ -376,8 +368,9 @@
                     </div>
 
                     <!-- Step 3 Fire Button (Opens Payload Modal) -->
+                    <!-- ★ [연타 방지 가드 1] id="fire-action-btn" 추가 -->
                     <div id="fire-payload-control" class="hidden flex flex-col items-center gap-2 w-full max-w-md">
-                        <button onclick="openPayloadModal()" class="w-full py-4 bg-gradient-to-r from-rose-600 via-red-500 to-amber-500 hover:from-rose-500 hover:to-red-400 text-white font-cyber text-xl md:text-2xl rounded-2xl shadow-xl border-2 border-amber-300 active:scale-95 transition animate-pulse flex items-center justify-center gap-2">
+                        <button id="fire-action-btn" onclick="openPayloadModal()" class="w-full py-4 bg-gradient-to-r from-rose-600 via-red-500 to-amber-500 hover:from-rose-500 hover:to-red-400 text-white font-cyber text-xl md:text-2xl rounded-2xl shadow-xl border-2 border-amber-300 active:scale-95 transition animate-pulse flex items-center justify-center gap-2">
                             <span>🚀</span><span>사이버 해킹 바이러스 전송 (FIRE!)</span>
                         </button>
                         <span class="text-xs text-amber-200 font-semibold font-mono-code">> 두 근 해독 완료! 전술 바이러스를 선택하여 적 코어를 타격하세요!</span>
@@ -657,16 +650,12 @@
         let lockoutTimerInterval = null;
         const recentProblemsSet = new Set();
         let glitchWipesRemaining = 5;
+        let lastRenderedStage = -1;
+        let lastRenderedTarget = -1;
 
-        /*
-           중3 수학 핵심 대수: 이차방정식 생성기
-           - ax^2 + bx + c = 0
-           - 계수 a, b, c 추출
-           - 판별식 D = b^2 - 4ac (완전제곱수 D >= 0 위주로 정수/유리수 근 도출)
-           - 1단계: 판별식 D 값
-           - 2단계: 근의 공식 부품 (예: 분모 2a, 또는 분자 -b 값)
-           - 3단계: 도출되는 두 근 중 더 큰 근(r2) 계산
-        */
+        // ★ [연타 방지 가드 플래그] 4단계 페이로드 발사 중복 클릭 방지
+        let isActionProcessing = false;
+
         function generateQuadraticMission(opIndex = 1) {
             let mission = null;
             let attempts = 0;
@@ -678,8 +667,7 @@
                     a = Math.random() < 0.5 ? 2 : 3;
                 }
 
-                // Two distinct roots
-                let r1 = Math.floor(Math.random() * 11) - 5; // -5 to 5
+                let r1 = Math.floor(Math.random() * 11) - 5;
                 let r2 = Math.floor(Math.random() * 11) - 5;
                 if (r1 === r2) r2 = r1 + 2;
                 if (r1 > r2) { const tmp = r1; r1 = r2; r2 = tmp; }
@@ -695,7 +683,6 @@
 
                 if (Math.abs(b) > 28 || Math.abs(c) > 40) continue;
 
-                // Format expression
                 let expr = "";
                 const aStr = a === 1 ? "" : (a === -1 ? "-" : `${a}`);
                 expr += `${aStr}x²`;
@@ -708,17 +695,13 @@
 
                 expr += ` = 0`;
 
-                // Stage 1: Discriminant D
                 const step0Ans = D;
-
-                // Stage 2: -b (formula numerator) or 2a (formula denominator)
                 const isNumeratorPart = Math.random() < 0.5;
                 const step1Ans = isNumeratorPart ? -b : 2 * a;
                 const step1Clue = isNumeratorPart 
                     ? `근의 공식 x = (-b ± √D) / 2a 에서 분자의 첫 번째 항인 [ -b ] 의 값을 구하라!`
                     : `근의 공식 x = (-b ± √D) / 2a 에서 분모인 [ 2a ] 의 값을 구하라!`;
 
-                // Stage 3: Larger root r2
                 const step2Ans = r2;
                 const step2Clue = `해독된 공식 부품을 조립하여 두 근 중 [ 더 큰 근(최댓값) ] 을 입력하라! (작은 근: ${r1})`;
 
@@ -778,7 +761,6 @@
             const lockoutBox = document.getElementById('lockout-penalty-box');
             const timerEl = document.getElementById('lockout-timer-num');
             lockoutBox.classList.remove('hidden');
-
             timerEl.innerText = '5.0';
 
             if (lockoutTimerInterval) clearInterval(lockoutTimerInterval);
@@ -863,12 +845,15 @@
         }
 
         window.joinTeam = async function(team) {
-            const name = document.getElementById('player-name').value.trim() || `해커_${Math.floor(Math.random()*900+100)}`;
-            const code = document.getElementById('room-code').value.trim() || 'core301';
+            const nameInput = document.getElementById('player-name');
+            const codeInput = document.getElementById('room-code');
+            const name = (nameInput ? nameInput.value.trim() : '') || `해커_${Math.floor(Math.random()*900+100)}`;
+            const code = (codeInput ? codeInput.value.trim() : '') || 'core301';
 
             currentUserName = name;
             currentRoomCode = code;
             myTeam = team;
+            isActionProcessing = false;
 
             const myMemberObj = { id: myPlayerId, name: currentUserName, lastSeen: Date.now(), joinedAt: myJoinedAt };
 
@@ -881,6 +866,8 @@
                         if (!msg) return;
                         if (msg.type === 'LOCAL_PING' && msg.team === myTeam) {
                             addTacticalPingCoords(msg.x, msg.y, msg.sender);
+                        } else if (msg.type === 'SYNC_STATE' && msg.payload) {
+                            applyRoomState(msg.payload);
                         }
                     };
                 }
@@ -927,6 +914,7 @@
             currentUserName = '교사 중계석';
             currentRoomCode = code;
             myTeam = 'spectator';
+            isActionProcessing = false;
 
             try {
                 if (window.BroadcastChannel) {
@@ -1026,7 +1014,7 @@
             if (data.lastPing && (!window.lastObservedPingId || window.lastObservedPingId !== data.lastPing.id)) {
                 window.lastObservedPingId = data.lastPing.id;
                 if (myTeam === 'spectator' || data.lastPing.team === myTeam) {
-                    addTacticalPing(data.lastPing.nodeIndex, data.lastPing.sender);
+                    addTacticalPingCoords(data.lastPing.x, data.lastPing.y, data.lastPing.sender);
                 }
             }
 
@@ -1053,6 +1041,11 @@
 
         async function syncStateUpdate(nextData) {
             applyRoomState(nextData);
+            if (bc) {
+                try {
+                    bc.postMessage({ type: 'SYNC_STATE', payload: nextData });
+                } catch (e) {}
+            }
             if (!useFallback && db) {
                 try {
                     const roomRef = doc(db, 'code_breaker_rooms', currentRoomCode);
@@ -1080,13 +1073,13 @@
             // Handle Spectator / Broadcaster View
             if (team === 'spectator') {
                 const specPanel = document.getElementById('spectator-broadcast-panel');
-                const numControls = document.getElementById('number-input-control');
-                const fireControls = document.getElementById('fire-payload-control');
+                const numControl = document.getElementById('number-input-control');
+                const fireControl = document.getElementById('fire-payload-control');
                 const waitingNotice = document.getElementById('waiting-notice');
 
                 if (specPanel) specPanel.classList.remove('hidden');
-                if (numControls) numControls.classList.add('hidden');
-                if (fireControls) fireControls.classList.add('hidden');
+                if (numControl) numControl.classList.add('hidden');
+                if (fireControl) fireControl.classList.add('hidden');
                 if (waitingNotice) waitingNotice.classList.add('hidden');
 
                 const teamBadge = document.getElementById('my-team-badge');
@@ -1096,7 +1089,7 @@
                 }
                 const roleBadge = document.getElementById('my-role-badge');
                 if (roleBadge) {
-                    roleBadge.innerText = `관전 모드 (학생 진행 100% 자율)`;
+                    roleBadge.innerText = `관전 모드 (학생 풀이 미방해)`;
                     roleBadge.className = 'text-xs px-3.5 py-1 bg-slate-800 text-slate-300 border border-slate-600 rounded-full font-bold font-mono-code';
                 }
 
@@ -1135,12 +1128,13 @@
 
                 const instEl = document.getElementById('step-instruction');
                 if (instEl) {
-                    instEl.innerHTML = `<span class="text-yellow-300">📡 [실시간 공식 중계 중] 양 팀의 2차방정식 코어 크래킹 배틀을 관전하고 있습니다.</span>`;
+                    instEl.innerHTML = `<span class="text-yellow-300">📡 [실시간 중계 중] 양 팀의 2차방정식 코어 크래킹 배틀을 관전하고 있습니다.</span>`;
                 }
 
                 const activeMission = bHp >= rHp ? data.blueMission : data.redMission;
-                if (activeMission && document.getElementById('equation-display')) {
-                    document.getElementById('equation-display').innerText = activeMission.expr;
+                if (activeMission) {
+                    const eqEl = document.getElementById('equation-display');
+                    if (eqEl) eqEl.innerText = activeMission.expr;
                 }
                 return;
             }
@@ -1162,7 +1156,6 @@
             const slot2a = document.getElementById('formula-slot-2a');
             const slotRoots = document.getElementById('formula-slot-roots');
 
-            // Stage 0: D is locked or unlocked
             if (currentStage >= 1) {
                 slotD.innerHTML = `<span class="text-emerald-300 font-bold">${currentMission.D}</span>`;
                 slotD.className = "px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-400 text-emerald-300 font-bold shadow-[0_0_8px_#10b981]";
@@ -1171,7 +1164,6 @@
                 slotD.className = "px-2 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-400 font-bold";
             }
 
-            // Stage 1: Component (-b or 2a) unlocked
             if (currentStage >= 2) {
                 slotB.innerHTML = `<span class="text-yellow-300 font-bold">${-currentMission.b}</span>`;
                 slotB.className = "px-2 py-0.5 rounded bg-amber-950/80 border border-yellow-400 text-yellow-300 font-bold shadow-[0_0_8px_#eab308]";
@@ -1184,7 +1176,6 @@
                 slot2a.className = "px-2 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-400 font-bold";
             }
 
-            // Stage 2 & 3: Roots unlocked
             if (currentStage >= 3) {
                 slotRoots.innerHTML = `<span class="text-emerald-300 font-bold">x = ${currentMission.r1}, ${currentMission.r2} (해독 완료!)</span>`;
                 slotRoots.className = "px-2.5 py-1 rounded bg-emerald-950 border-2 border-emerald-400 text-emerald-300 font-bold shadow-[0_0_12px_#10b981] animate-pulse";
@@ -1217,20 +1208,24 @@
 
             const roleBadge = document.getElementById('my-role-badge');
             if (myIndex !== -1) {
-                roleBadge.innerText = `내 역할: ${getRoleDescription(myIndex, teamSize, problemCount)}`;
+                roleBadge.innerText = `내 포지션: ${getRoleDescription(myIndex, teamSize, problemCount)}`;
                 roleBadge.className = isMyTurn 
                     ? 'text-xs px-3.5 py-1 bg-yellow-400 text-slate-950 border-2 border-yellow-300 rounded-full font-cyber font-bold animate-pulse'
                     : 'text-xs px-3.5 py-1 bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 rounded-full font-bold font-mono-code';
             } else {
-                roleBadge.innerText = "코어 관전 중";
+                roleBadge.innerText = "사령부 관전 중";
             }
 
             const instEl = document.getElementById('step-instruction');
-            const numControls = document.getElementById('number-input-control');
-            const fireControls = document.getElementById('fire-payload-control');
+            const numControl = document.getElementById('number-input-control');
+            const fireControl = document.getElementById('fire-payload-control');
             const waitingNotice = document.getElementById('waiting-notice');
             const currentActorEl = document.getElementById('current-actor-name');
             const stepNumInput = document.getElementById('step-number-input');
+
+            const isStageChanged = (lastRenderedStage !== currentStage || lastRenderedTarget !== problemCount);
+            lastRenderedStage = currentStage;
+            lastRenderedTarget = problemCount;
 
             if (currentStage === 0) {
                 instEl.innerText = `【1단계: 판별식 D 분석】 a = ${currentMission.a}, b = ${currentMission.b}, c = ${currentMission.c} 일 때 D = b² - 4ac 의 값을 입력하세요!`;
@@ -1245,19 +1240,21 @@
             if (isMyTurn) {
                 waitingNotice.classList.add('hidden');
                 if (currentStage === 3) {
-                    numControls.classList.add('hidden');
-                    fireControls.classList.remove('hidden');
+                    numControl.classList.add('hidden');
+                    fireControl.classList.remove('hidden');
                 } else {
-                    fireControls.classList.add('hidden');
-                    numControls.classList.remove('hidden');
+                    fireControl.classList.add('hidden');
+                    numControl.classList.remove('hidden');
                     stepNumInput.disabled = false;
-                    stepNumInput.value = '';
+                    if (isStageChanged) {
+                        stepNumInput.value = '';
+                        stepNumInput.focus();
+                    }
                     stepNumInput.placeholder = currentStage === 0 ? "판별식 D 값 입력" : (currentStage === 1 ? "공식 부품값 입력" : "더 큰 근 x 입력");
-                    stepNumInput.focus();
                 }
             } else {
-                numControls.classList.add('hidden');
-                fireControls.classList.add('hidden');
+                numControl.classList.add('hidden');
+                fireControl.classList.add('hidden');
                 waitingNotice.classList.remove('hidden');
                 currentActorEl.innerText = `${activeMemberName} (${activeMemberIndex + 1}번 해커)`;
             }
@@ -1293,7 +1290,8 @@
             if (isLockedOut) return;
             if (!lastKnownRoomData) return;
             const inputEl = document.getElementById('step-number-input');
-            const val = parseFloat(inputEl.value.trim());
+            const sanitized = inputEl.value.trim().replace(/[^0-9.-]/g, '');
+            const val = parseFloat(sanitized);
 
             if (isNaN(val)) {
                 showStepFeedback("숫자를 입력해 주세요!", true);
@@ -1333,12 +1331,28 @@
         };
 
         window.openPayloadModal = function() {
+            // ★ [연타 방지 가드 1] 이미 처리 중이면 모달 오픈 차단
+            if (isActionProcessing) return;
             document.getElementById('payload-modal').classList.remove('hidden');
         };
 
         window.choosePayload = async function(payloadType) {
+            // ★ [연타 방지 가드 2] 즉시 잠금 설정 및 버튼 비활성화
+            if (isActionProcessing) return;
+            isActionProcessing = true;
+
+            const fireActionBtn = document.getElementById('fire-action-btn');
+            if (fireActionBtn) {
+                fireActionBtn.disabled = true;
+                fireActionBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
             document.getElementById('payload-modal').classList.add('hidden');
-            if (!lastKnownRoomData) return;
+            if (!lastKnownRoomData) {
+                isActionProcessing = false;
+                return;
+            }
+
             const data = lastKnownRoomData;
             const enemyTeam = myTeam === 'blue' ? 'red' : 'blue';
 
@@ -1397,6 +1411,7 @@
                 }
 
                 hitData.updatedAt = Date.now();
+                isActionProcessing = false;
                 await syncStateUpdate(hitData);
             }, 1200);
 
@@ -1423,6 +1438,7 @@
 
         function showStepFeedback(text, isError) {
             const el = document.getElementById('battle-feedback');
+            if (!el) return;
             el.innerText = text;
             el.className = isError 
                 ? "text-sm font-bold text-rose-400 min-h-[24px] mt-2 animate-pulse" 
@@ -1460,9 +1476,6 @@
             }, 1200);
         }
 
-        // ==========================================
-        // 🚀 SPECTACULAR CYBERPUNK 2D CANVAS ENGINE
-        // ==========================================
         let canvas, ctx;
         let tacticalPings = [];
         let laserBeams = [];
@@ -1472,11 +1485,11 @@
 
         function initCyberCanvas() {
             canvas = document.getElementById('cyber-canvas');
+            if (!canvas) return;
             ctx = canvas.getContext('2d');
             resizeCyberCanvas();
             window.addEventListener('resize', resizeCyberCanvas);
 
-            // Initialize Matrix Rain Drops
             matrixChars = [];
             const colCount = Math.floor(window.innerWidth / 35);
             for (let i = 0; i < colCount; i++) {
@@ -1521,14 +1534,12 @@
             sfx.tacticalPing();
             addTacticalPingCoords(cx, cy, currentUserName || '해커');
 
-            // Zero-cost broadcast to other local tabs
             if (bc) {
                 try {
                     bc.postMessage({ type: 'LOCAL_PING', team: myTeam, x: Math.round(cx), y: Math.round(cy), sender: currentUserName || '해커' });
                 } catch (e) {}
             }
 
-            // Throttled Firestore ping (max once every 2.5s)
             const now = Date.now();
             if (now - lastPingSentTime > 2500 && lastKnownRoomData) {
                 lastPingSentTime = now;
@@ -1596,11 +1607,9 @@
             const midX = w / 2;
             const midY = h / 2;
 
-            // 1. Futuristic Circuit Grid Background
             ctx.fillStyle = '#020617';
             ctx.fillRect(0, 0, w, h);
 
-            // Subtle Circuit Traces
             ctx.strokeStyle = 'rgba(6, 182, 212, 0.07)';
             ctx.lineWidth = 1;
             for (let x = 0; x < w; x += 40) {
@@ -1616,7 +1625,6 @@
                 ctx.stroke();
             }
 
-            // 2. Matrix Rain Stream Characters
             ctx.font = 'bold 11px "JetBrains Mono", monospace';
             for (let i = 0; i < matrixChars.length; i++) {
                 const drop = matrixChars[i];
@@ -1630,7 +1638,6 @@
                 }
             }
 
-            // 3. Glowing Data Bus Lines Connecting Cores to Center Vault
             const blueHp = lastKnownRoomData ? lastKnownRoomData.blueHp : 100;
             const redHp = lastKnownRoomData ? lastKnownRoomData.redHp : 100;
             const currentStage = lastKnownRoomData ? (myTeam === 'blue' ? (lastKnownRoomData.blueStage || 0) : (lastKnownRoomData.redStage || 0)) : 0;
@@ -1638,15 +1645,12 @@
             drawCircuitBus(85, midY, midX - 55, midY, '#38bdf8', true);
             drawCircuitBus(midX + 55, midY, w - 85, midY, '#fb7185', false);
 
-            // 4. Central Quantum Quadratic Vault (The 4-Ring Decryption Lock)
             vaultAngle += 0.015;
             drawCentralQuantumVault(midX, midY, currentStage, vaultAngle);
 
-            // 5. High-Tech Mainframe Supercomputer Cores
             drawCyberMainframeCore(85, midY, 'blue', blueHp);
             drawCyberMainframeCore(w - 85, midY, 'red', redHp);
 
-            // 6. Laser Beams (Supercharged Railgun Animation)
             for (let i = laserBeams.length - 1; i >= 0; i--) {
                 const b = laserBeams[i];
                 b.progress += 0.045;
@@ -1666,7 +1670,6 @@
                 ctx.lineTo(curX, midY);
                 ctx.stroke();
 
-                // Core Railgun Bullet
                 ctx.fillStyle = '#ffffff';
                 ctx.shadowBlur = 15;
                 ctx.shadowColor = '#ffffff';
@@ -1678,7 +1681,6 @@
                 if (b.progress >= 1) laserBeams.splice(i, 1);
             }
 
-            // 7. Tactical Pings
             for (let i = tacticalPings.length - 1; i >= 0; i--) {
                 const p = tacticalPings[i];
                 p.radius += 0.9;
@@ -1700,7 +1702,6 @@
                 if (p.alpha <= 0) tacticalPings.splice(i, 1);
             }
 
-            // 8. Explosion Particles
             for (let i = explosions.length - 1; i >= 0; i--) {
                 const exp = explosions[i];
                 exp.x += exp.vx;
@@ -1723,7 +1724,6 @@
             requestAnimationFrame(renderCyberLoop);
         }
 
-        // Circuit Bus Lines with flowing energy pulses
         function drawCircuitBus(x1, y1, x2, y2, color, isLeft) {
             ctx.save();
             ctx.strokeStyle = color;
@@ -1734,7 +1734,6 @@
             ctx.lineTo(x2, y2);
             ctx.stroke();
 
-            // Flowing packets
             const pulse = (Date.now() / 400) % 1;
             const px = isLeft ? (x1 + (x2 - x1) * pulse) : (x2 - (x2 - x1) * pulse);
             ctx.globalAlpha = 1;
@@ -1751,7 +1750,6 @@
             ctx.save();
             ctx.translate(x, y);
 
-            // 1. Outer Rotating Decryption Ring
             ctx.save();
             ctx.rotate(angle);
             ctx.strokeStyle = 'rgba(6, 182, 212, 0.45)';
@@ -1762,7 +1760,6 @@
             ctx.stroke();
             ctx.restore();
 
-            // 2. Inner Counter-Rotating Hex Vault Ring
             ctx.save();
             ctx.rotate(-angle * 1.5);
             ctx.strokeStyle = currentStage >= 3 ? '#10b981' : (currentStage >= 1 ? '#facc15' : '#06b6d4');
@@ -1779,7 +1776,6 @@
             ctx.stroke();
             ctx.restore();
 
-            // 3. Central Solid Vault Core
             ctx.fillStyle = '#051329';
             ctx.strokeStyle = '#38bdf8';
             ctx.lineWidth = 2.5;
@@ -1790,7 +1786,6 @@
             ctx.fill();
             ctx.stroke();
 
-            // 4. Vault Status Icons & Text
             ctx.shadowBlur = 0;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -1837,7 +1832,6 @@
             ctx.save();
             ctx.translate(x, y);
 
-            // 1. Outer Rotating Shield Ring
             ctx.strokeStyle = coreColor;
             ctx.lineWidth = 2.5;
             ctx.shadowBlur = 12;
@@ -1846,7 +1840,6 @@
             ctx.arc(0, 0, 42, 0, Math.PI * 2);
             ctx.stroke();
 
-            // 2. Server Mainframe Hexagonal Housing
             ctx.fillStyle = '#090d16';
             ctx.strokeStyle = '#475569';
             ctx.lineWidth = 2;
@@ -1862,27 +1855,23 @@
             ctx.fill();
             ctx.stroke();
 
-            // 3. Glowing CPU Reactor Core
             const corePulseScale = 1 + Math.sin(Date.now() / 300) * 0.08;
             ctx.fillStyle = isBlue ? 'rgba(56, 189, 248, 0.3)' : 'rgba(251, 113, 133, 0.3)';
             ctx.beginPath();
             ctx.arc(0, 0, 20 * corePulseScale, 0, Math.PI * 2);
             ctx.fill();
 
-            // Mainframe Icon
             ctx.font = '18px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(isBlue ? "🔵" : "🔴", 0, 0);
 
-            // Server LED Blinking status
             const blink = Math.floor(Date.now() / 400) % 2 === 0;
             ctx.fillStyle = blink ? '#4ade80' : '#15803d';
             ctx.beginPath();
             ctx.arc(-14, -22, 2.5, 0, Math.PI * 2);
             ctx.fill();
 
-            // Mainframe HP Badge
             ctx.font = 'bold 11px "JetBrains Mono", monospace';
             ctx.fillStyle = coreColor;
             ctx.fillText(`${name} [${hp}%]`, 0, -50);
